@@ -13,7 +13,6 @@ class TicTacViewController: UIViewController {
     @IBOutlet weak var playerInfoLabel: UILabel!
     @IBOutlet weak var boardCollectionView: UICollectionView!
     @IBOutlet weak var buttonStackView: UIStackView!
-    @IBOutlet weak var messageLabel: UILabel!
     
     var gridSize = 3
     var player1Name = ""
@@ -43,7 +42,6 @@ class TicTacViewController: UIViewController {
         self.player2.textColor = .white
         self.player2.playerId = 2
         self.updateTurns()
-        self.messageLabel.isHidden = true
         self.buttonStackView.isHidden = true
         
         let flowLayout = UICollectionViewFlowLayout()
@@ -55,7 +53,10 @@ class TicTacViewController: UIViewController {
         boardCollectionView.dataSource = self
         boardCollectionView.collectionViewLayout = flowLayout
         let padding = (UIScreen.main.bounds.width - (CGFloat(gridSize) * Constants.cellWidth)) / 2.0
-        boardCollectionView.contentInset = UIEdgeInsets(top: 0, left: padding, bottom: 0, right: padding);
+        let gridHeight = Constants.cellHeight * CGFloat(gridSize)
+        let topPadding = (boardCollectionView.bounds.height - gridHeight) / 2
+        let top = topPadding < 0 ? 0 : topPadding
+        boardCollectionView.contentInset = UIEdgeInsets(top: top, left: padding, bottom: 0, right: padding);
 
     }
     
@@ -64,9 +65,8 @@ class TicTacViewController: UIViewController {
         self.player1.isWon = false
         self.player2.isWon = false
         boardCollectionView.reloadData()
-        self.messageLabel.isHidden = true
         self.buttonStackView.isHidden = true
-
+        self.boardCollectionView.isUserInteractionEnabled = false
     }
     
     @IBAction func exitButtonTapped(_ sender: Any) {
@@ -76,6 +76,7 @@ class TicTacViewController: UIViewController {
     func showMessage(msg: String) {
         self.playerInfoLabel.text = msg
         self.buttonStackView.isHidden = false
+        self.boardCollectionView.isUserInteractionEnabled = false
     }
     
     func updateBoard() {
@@ -216,12 +217,14 @@ extension TicTacViewController: UICollectionViewDelegate {
             self.numberOfturns += 1
             if player1.isActive {
                 cell.markLabel.text = "X"
+                cell.markLabel.textColor = player1.textColor
                 cell.playerId = player1.playerId
                 player1.isActive = false
                 player2.isActive = true
             }else{
                 cell.markLabel.text = "O"
                 cell.playerId = player2.playerId
+                cell.markLabel.textColor = player2.textColor
                 player2.isActive = false
                 player1.isActive = true
             }
@@ -247,10 +250,6 @@ extension TicTacViewController: UICollectionViewDataSource {
     {
         let cell  = boardCollectionView.dequeueReusableCell(withReuseIdentifier: "boardCell", for: indexPath) as! BoardCollectionViewCell
         cell.setUp()
-        
-//        let bottomOffset = CGPoint(x: 0, y: boardCollectionView.contentSize.height - boardCollectionView.bounds.size.height)
-//        boardCollectionView.setContentOffset(bottomOffset, animated: false)
-        
         return cell
     }
 }

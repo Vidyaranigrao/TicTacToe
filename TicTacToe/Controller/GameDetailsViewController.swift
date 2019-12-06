@@ -21,6 +21,7 @@ class GameDetailsViewController: UIViewController {
     @IBOutlet weak var gridSizeTextField: UITextField!
     @IBOutlet weak var descriptionLabel: UILabel!
     
+    // determine the grid size based on the screen size
     let maxGridSize = Int(UIScreen.main.bounds.width/Constants.cellWidth)
 
     override func viewDidLoad() {
@@ -38,8 +39,7 @@ class GameDetailsViewController: UIViewController {
         self.player2TextField.placeholder = "Please enter PLayer 2 name"
         self.player2TextField.delegate = self
         self.enablePlayButton()
-        print((UIScreen.main.bounds.width - 20)/Constants.cellWidth)
-        self.descriptionLabel.text = "Grid Size can vary between 3 and \(maxGridSize)"
+        self.descriptionLabel.text = "(Grid Size can vary between 3 and \(maxGridSize))"
     }
     
     func enablePlayButton() {
@@ -68,20 +68,24 @@ class GameDetailsViewController: UIViewController {
 extension GameDetailsViewController: UITextFieldDelegate {
     func textFieldDidEndEditing(_ textField: UITextField) {
         if textField == self.gridSizeTextField {
-            self.enablePlayButton()
+            enablePlayButton()
         }
     }
     
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         if textField == self.gridSizeTextField {
+            // enable play button once the user enters valid grid size
             if let text = textField.text as NSString? {
                 let updatedText = text.replacingCharacters(in: range, with: string)
-                self.playButton.isEnabled = (updatedText == "") ? false : true
                 if let intValue = Int(updatedText) {
                     if (intValue > maxGridSize || intValue < 3) {
-                        return false
+                        self.playButton.isEnabled = false
+                    } else {
+                        self.playButton.isEnabled = true
                     }
+                } else {
+                    self.playButton.isEnabled = false
                 }
             }
         }
