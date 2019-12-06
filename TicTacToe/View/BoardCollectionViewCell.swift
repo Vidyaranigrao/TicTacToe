@@ -17,5 +17,6 @@ class BoardCollectionViewCell: UICollectionViewCell {
         self.layer.borderWidth = 2.0
         self.layer.borderColor = UIColor.black.cgColor
         self.markLabel.text = ""
+        self.playerId = 0
     }
 }

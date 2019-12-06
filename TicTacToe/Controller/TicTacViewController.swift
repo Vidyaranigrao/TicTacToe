@@ -64,9 +64,11 @@ class TicTacViewController: UIViewController {
         self.player1.isActive = true
         self.player1.isWon = false
         self.player2.isWon = false
+        numberOfturns = 0
+        self.updateTurns()
         boardCollectionView.reloadData()
         self.buttonStackView.isHidden = true
-        self.boardCollectionView.isUserInteractionEnabled = false
+        self.boardCollectionView.isUserInteractionEnabled = true
     }
     
     @IBAction func exitButtonTapped(_ sender: Any) {
